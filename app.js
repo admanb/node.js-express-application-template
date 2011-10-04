@@ -19,15 +19,17 @@ app.configure(function(){
 	app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }))
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
+
+	app.set('appname', 'template');
 });
 
 app.configure('development', function() {
-  app.set('db-uri', 'mongodb://localhost/tournament-development');
+  app.set('db-uri', 'mongodb://localhost/'+ app.set('appname') +'-development');
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function() {
-  app.set('db-uri', 'mongodb://localhost/tournament-production');
+  app.set('db-uri', 'mongodb://localhost/'+ app.set('appname') +'-production');
 	app.use(express.errorHandler()); 
 });
 
@@ -39,7 +41,7 @@ var db = mongoose.connect(app.set('db-uri'));
 
 app.get('/', function(req, res){
   res.render('index', {
-    title: 'Express'
+    title: app.set('appname')
   });
 });
 
